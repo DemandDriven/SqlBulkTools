@@ -56,3 +56,5 @@ deploy:
   prerelease: true
   auth_token:
     secure: a2Mi5cAISceDjN9BGaDbc+P5vES7sOYrcvjoY0Ji+0uwLUlsc3lHkv5AkApTFF5O
+  on:
+    branch: master                 # release from master branch only
