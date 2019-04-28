@@ -1,0 +1,59 @@
+version: 2.0.{build}.0
+skip_tags: true
+pull_requests:
+  do_not_increment_build_number: true
+configuration: Release
+image: Visual Studio 2017
+services:
+  - mssql2017
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: $(BuildDate)
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '$(scrubbed_version)'
+  package_version: '{version}'
+  assembly_version: '$(scrubbed_version)'
+  file_version: '$(scrubbed_version)'
+  informational_version: $(BuildDate)
+environment:
+  # Don't run tests for .NET Core (misdetected via csproj 2017 format)
+  APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
+  slnname: SqlBulkTools
+nuget:
+  account_feed: true
+  disable_publish_on_pr: true
+init:
+- ps: appveyor version
+- ps: $env:BuildDate = $(Get-Date -format yyyyMMdd)
+# Need to trim the "-sdfadsfad" from Pull Request builds
+- ps: $env:scrubbed_version = $env:APPVEYOR_BUILD_VERSION
+- ps: >-
+    if ($env:APPVEYOR_BUILD_VERSION.IndexOf("-") -gt 0) {
+        $env:scrubbed_version = $env:APPVEYOR_BUILD_VERSION.Substring(0, $env:APPVEYOR_BUILD_VERSION.IndexOf("-"))
+    }
+before_build:
+- cmd: nuget restore %slnname%.sln
+# Post-install test scripts.
+build:
+  project: %slnname%.sln
+  publish_nuget: true
+  verbosity: normal
+after_build:
+# Enable/Print RDP information in build log, then pause build process for investigation
+#- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+test:
+  assemblies:
+    only:
+      - '**\SqlBulkTools.IntegrationTests\bin\Release\SqlBulkTools.IntegrationTests.dll'
+      - '**\SqlBulkTools.UnitTests\bin\Release\SqlBulkTools.UnitTests.dll'
+deploy:
+  release: $(appveyor_build_version)
+  provider: GitHub
+  prerelease: true
+  auth_token:
+    secure: a2Mi5cAISceDjN9BGaDbc+P5vES7sOYrcvjoY0Ji+0uwLUlsc3lHkv5AkApTFF5O
