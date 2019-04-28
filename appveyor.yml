@@ -23,7 +23,6 @@ dotnet_csproj:
 environment:
   # Don't run tests for .NET Core (misdetected via csproj 2017 format)
   APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
-  slnname: SqlBulkTools
 nuget:
   account_feed: true
   disable_publish_on_pr: true
@@ -37,10 +36,10 @@ init:
         $env:scrubbed_version = $env:APPVEYOR_BUILD_VERSION.Substring(0, $env:APPVEYOR_BUILD_VERSION.IndexOf("-"))
     }
 before_build:
-- cmd: nuget restore %slnname%.sln
+- cmd: nuget restore SqlBulkTools.sln
 # Post-install test scripts.
 build:
-  project: %slnname%.sln
+  project: SqlBulkTools.sln
   publish_nuget: true
   verbosity: normal
 after_build:
