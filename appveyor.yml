@@ -48,7 +48,7 @@ after_build:
 test:
   assemblies:
     only:
-      - '**\SqlBulkTools.IntegrationTests\bin\Release\SqlBulkTools.IntegrationTests.dll'
+      #- '**\SqlBulkTools.IntegrationTests\bin\Release\SqlBulkTools.IntegrationTests.dll'
       - '**\SqlBulkTools.UnitTests\bin\Release\SqlBulkTools.UnitTests.dll'
 deploy:
   release: $(appveyor_build_version)
