@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SqlBulkTools</id>
+    <version>$version$</version>
+    <description>SqlBulkTools</description>
+  </metadata>
+  <files>
+     <file src="..\SqlBulkTools\bin\Release\SqlBulkTools.dll" target="lib\net45" />
+  </files>
+</package>
